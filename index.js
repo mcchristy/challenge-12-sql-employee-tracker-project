@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
-const connection = require('./db/connection');
-const Employee = require('./lib/Employee');
-const Role = require('./lib/Role');
-const Department = require('./lib/Department');
+// const connection = require('./db/connection');
+const Employee = require('./utils/employee');
+const Role = require('./utils/role');
+const Department = require('./utils/department');
 
 const questions = [
     {
@@ -136,15 +136,15 @@ const questions = [
 
       switch (response.selectAction) {
         case "View All Employees":
-          db.viewEmployeesQuery().then((data) => {
+          Employee.viewEmployeesQuery().then((data) => {
             console.table(data[0]);
             menu();
           });
           break;
         case "Add Employee":
           inquirer.prompt(addEmployee).then((response) => {
-            db.findRoleByName(response.employeeRole).then((data) => {
-              db
+            Employee.findRoleByName(response.employeeRole).then((data) => {
+              Employee
                 .addEmployee(data[0][0].id, response.firstName, response.lastName)
                 .then(() => {
                   console.log("New employee added to database");
@@ -155,8 +155,8 @@ const questions = [
           break;
         case "Update Employee Role":
           inquirer.prompt(updateEmployeeRole).then((response) => {
-            db.findRoleByName(response.employeeRole).then((data) => {
-              db
+            Role.findRoleByName(response.employeeRole).then((data) => {
+              Role
                 .updateEmployeeRole(
                   data[0][0].id,
                   response.firstName,
@@ -170,15 +170,15 @@ const questions = [
           });
           break;
         case "View All Roles":
-          db.viewAllRolesQuery().then((data) => {
+          Role.viewAllRolesQuery().then((data) => {
             console.table(data[0]);
             menu();
           });
           break;
         case "Add Role":
           inquirer.prompt(addRole).then((response) => {
-            db.findDepartmentByName(response.newRoleDepartment).then((data) => {
-              db.addRole(response.roleName, response.roleSalary, data[0][0].id).then((data) => {
+            Department.findDepartmentByName(response.newRoleDepartment).then((data) => {
+              Department.addRole(response.roleName, response.roleSalary, data[0][0].id).then((data) => {
                 console.log("New role added to database");
                 menu();
               });
@@ -186,14 +186,14 @@ const questions = [
           });
           break;
         case "View All Departments":
-          db.viewAllDepartmentsQuery().then((data) => {
+          Department.viewAllDepartmentsQuery().then((data) => {
             console.table(data[0]);
             menu();
           });
           break;
         case "Add Department":
           inquirer.prompt(addDepartment).then((response) => {
-            db.addDepartment(response).then((data) => {
+            Department.addDepartment(response).then((data) => {
               console.log("New department added to database");
               menu();
             });
